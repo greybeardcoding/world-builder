@@ -15,6 +15,23 @@
     "pack": "electron-builder --dir"
   },
   "dependencies": {
+    "@tiptap/core": "^3.0.1",
+    "@tiptap/extension-blockquote": "^3.0.1",
+    "@tiptap/extension-code-block": "^3.0.1",
+    "@tiptap/extension-color": "^3.0.1",
+    "@tiptap/extension-highlight": "^3.0.1",
+    "@tiptap/extension-horizontal-rule": "^3.0.1",
+    "@tiptap/extension-image": "^3.0.1",
+    "@tiptap/extension-link": "^3.0.1",
+    "@tiptap/extension-list-item": "^3.0.1",
+    "@tiptap/extension-placeholder": "^3.0.1",
+    "@tiptap/extension-table": "^3.0.1",
+    "@tiptap/extension-task-item": "^3.0.1",
+    "@tiptap/extension-task-list": "^3.0.1",
+    "@tiptap/extension-text-align": "^3.0.1",
+    "@tiptap/extension-text-style": "^3.0.1",
+    "@tiptap/react": "^3.0.1",
+    "@tiptap/starter-kit": "^3.0.1",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

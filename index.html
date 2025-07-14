@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>World Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel -->
+        <div class="panel left-panel">
+            <div class="panel-header">Workspace</div>
+            <div class="block-container" id="left-blocks">
+                <div class="block">
+                    <div class="block-type">account</div>
+                    <div class="block-content">
+                        <strong>User Account</strong><br>
+                        <small>john.doe@example.com</small>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">menu</div>
+                    <div class="block-content">
+                        <div>📄 New Document</div>
+                        <div>📁 Open Folder</div>
+                        <div>⚙️ Settings</div>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">tree</div>
+                    <div class="block-content">
+                        <div><strong>📁 Project Files</strong></div>
+                        <div style="margin-left: 16px;">📄 Chapter 1.md</div>
+                        <div style="margin-left: 16px;">📄 Chapter 2.md</div>
+                        <div style="margin-left: 16px;">📁 Characters</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Middle Panel -->
+        <div class="panel middle-panel">
+            <div class="tab-container">
+                <button class="tab active" onclick="App.switchTab(0)">Document 1</button>
+                <button class="tab" onclick="App.switchTab(1)">Document 2</button>
+            </div>
+            <div class="tab-content">
+                <div class="block-container" id="middle-blocks">
+                    <!-- Blocks will be dynamically added here -->
+                </div>
+                <button class="add-block-btn" onclick="App.addNewBlock()">+ Add Block</button>
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="panel right-panel">
+            <div class="panel-header">Properties</div>
+            <div class="block-container" id="right-blocks">
+                <div class="block">
+                    <div class="block-type">meta</div>
+                    <div class="block-content">
+                        <strong>Document Info</strong><br>
+                        <small>Created: Today<br>
+                        Words: 1,247<br>
+                        Status: Draft</small>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">outline</div>
+                    <div class="block-content">
+                        <strong>Document Outline</strong>
+                        <div style="margin-top: 8px;">
+                            <div>1. Introduction</div>
+                            <div>2. Main Content</div>
+                            <div>3. Conclusion</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import shared BlockEditor from module to prevent code duplication
+        import './block-editor.js';
+
+        // Namespace all app functionality under single global
+        window.App = {
+            blockSystem: new BlockSystem(),
+            
+            // UI Functions
+            addNewBlock() {
+                return this.blockSystem.createBlock('text');
+            },
+            
+            switchTab(index) {
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach((tab, i) => {
+                    tab.classList.toggle('active', i === index);
+                });
+                
+                // For now, just update active tab styling
+                // TODO: Implement multiple tab content areas when needed
+                console.log(`Switched to tab ${index}`);
+            },
+            
+            removeBlock(blockId) {
+                return this.blockSystem.removeBlock(blockId);
+            }
+        };
+
+        // Add initial block
+        window.App.blockSystem.createBlock('text');
+    </script>
+</body>
+</html>

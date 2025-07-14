@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Block Editor Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .test-container { margin: 20px 0; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Block Editor Unit Tests</h1>
+    <div id="test-results"></div>
+    <div id="test-container" class="test-container"></div>
+
+    <script type="module">
+        import { Editor } from './node_modules/@tiptap/core/dist/index.js'
+        import StarterKit from './node_modules/@tiptap/starter-kit/dist/index.js'
+        import Placeholder from './node_modules/@tiptap/extension-placeholder/dist/index.js'
+
+        // Simple test framework
+        class TestRunner {
+            constructor() {
+                this.results = [];
+                this.container = document.getElementById('test-results');
+            }
+
+            test(name, testFn) {
+                try {
+                    testFn();
+                    this.results.push({ name, status: 'pass', error: null });
+                    this.log(`✓ ${name}`, 'pass');
+                } catch (error) {
+                    this.results.push({ name, status: 'fail', error: error.message });
+                    this.log(`✗ ${name}: ${error.message}`, 'fail');
+                }
+            }
+
+            log(message, status) {
+                const div = document.createElement('div');
+                div.className = `test-result ${status}`;
+                div.textContent = message;
+                this.container.appendChild(div);
+            }
+
+            assertEqual(actual, expected, message = '') {
+                if (actual !== expected) {
+                    throw new Error(`${message} Expected: ${expected}, Got: ${actual}`);
+                }
+            }
+
+            assertTrue(condition, message = '') {
+                if (!condition) {
+                    throw new Error(`${message} Expected truthy value`);
+                }
+            }
+
+            assertFalse(condition, message = '') {
+                if (condition) {
+                    throw new Error(`${message} Expected falsy value`);
+                }
+            }
+        }
+
+        // BlockSystem class for testing (simplified version)
+        class BlockSystem {
+            constructor(container) {
+                this.blocks = [];
+                this.editors = new Map();
+                this.container = container || document.createElement('div');
+            }
+
+            createBlock(type = 'text') {
+                const blockId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+                
+                const blockElement = document.createElement('div');
+                blockElement.className = 'block';
+                blockElement.innerHTML = `
+                    <div class="block-actions">
+                        <button onclick="App.removeBlock('${blockId}')">×</button>
+                    </div>
+                    <div class="block-type">${type}</div>
+                    <div class="block-content">
+                        <div class="block-editor" id="${blockId}"></div>
+                    </div>
+                `;
+
+                this.container.appendChild(blockElement);
+
+                // Simplified editor for testing (no Tiptap dependency in tests)
+                const mockEditor = {
+                    destroy: () => {},
+                    commands: { focus: () => {} }
+                };
+
+                const block = { id: blockId, type, element: blockElement, editor: mockEditor };
+                this.blocks.push(block);
+                this.editors.set(blockId, mockEditor);
+
+                return block;
+            }
+
+            removeBlock(blockId) {
+                const editor = this.editors.get(blockId);
+                if (editor) {
+                    editor.destroy();
+                    this.editors.delete(blockId);
+                }
+
+                this.blocks = this.blocks.filter(block => {
+                    if (block.id === blockId) {
+                        block.element.remove();
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            getBlockCount() {
+                return this.blocks.length;
+            }
+        }
+
+        // Run tests
+        const runner = new TestRunner();
+        const testContainer = document.getElementById('test-container');
+
+        runner.test('BlockSystem creates blocks correctly', () => {
+            const system = new BlockSystem(testContainer);
+            const block = system.createBlock('text');
+            
+            runner.assertTrue(block.id.startsWith('block-'), 'Block ID should start with "block-"');
+            runner.assertEqual(block.type, 'text', 'Block type should be "text"');
+            runner.assertTrue(block.element instanceof HTMLElement, 'Block should have DOM element');
+            runner.assertEqual(system.getBlockCount(), 1, 'System should have 1 block');
+        });
+
+        runner.test('BlockSystem removes blocks correctly', () => {
+            const system = new BlockSystem(testContainer);
+            const block1 = system.createBlock('text');
+            const block2 = system.createBlock('heading');
+            
+            runner.assertEqual(system.getBlockCount(), 2, 'Should have 2 blocks initially');
+            
+            system.removeBlock(block1.id);
+            runner.assertEqual(system.getBlockCount(), 1, 'Should have 1 block after removal');
+            
+            system.removeBlock(block2.id);
+            runner.assertEqual(system.getBlockCount(), 0, 'Should have 0 blocks after removing all');
+        });
+
+        runner.test('BlockSystem handles different block types', () => {
+            const system = new BlockSystem(testContainer);
+            
+            const textBlock = system.createBlock('text');
+            const headingBlock = system.createBlock('heading');
+            const quoteBlock = system.createBlock('quote');
+            
+            runner.assertEqual(textBlock.type, 'text');
+            runner.assertEqual(headingBlock.type, 'heading');
+            runner.assertEqual(quoteBlock.type, 'quote');
+            runner.assertEqual(system.getBlockCount(), 3);
+        });
+
+        runner.test('BlockSystem prevents duplicate block IDs', () => {
+            const system = new BlockSystem(testContainer);
+            const block1 = system.createBlock('text');
+            const block2 = system.createBlock('text');
+            
+            runner.assertTrue(block1.id !== block2.id, 'Block IDs should be unique');
+        });
+
+        runner.test('BlockSystem manages editor instances', () => {
+            const system = new BlockSystem(testContainer);
+            const block = system.createBlock('text');
+            
+            runner.assertTrue(system.editors.has(block.id), 'Editor should be stored in map');
+            
+            system.removeBlock(block.id);
+            runner.assertFalse(system.editors.has(block.id), 'Editor should be removed from map');
+        });
+
+        runner.test('getBlocks() returns correct block data', () => {
+            const system = new BlockSystem(testContainer);
+            
+            // Test empty state
+            const emptyBlocks = system.getBlocks();
+            runner.assertEqual(emptyBlocks.length, 0, 'Should return empty array initially');
+            
+            // Add blocks and test data structure
+            const textBlock = system.createBlock('text');
+            const headingBlock = system.createBlock('heading');
+            
+            const blocks = system.getBlocks();
+            runner.assertEqual(blocks.length, 2, 'Should return 2 blocks');
+            
+            // Verify data structure
+            runner.assertTrue(blocks[0].hasOwnProperty('id'), 'Block should have id property');
+            runner.assertTrue(blocks[0].hasOwnProperty('type'), 'Block should have type property');
+            runner.assertTrue(blocks[0].hasOwnProperty('content'), 'Block should have content property');
+            
+            runner.assertEqual(blocks[0].type, 'text', 'First block should be text type');
+            runner.assertEqual(blocks[1].type, 'heading', 'Second block should be heading type');
+            runner.assertTrue(typeof blocks[0].content === 'string', 'Content should be string');
+        });
+
+        // Display summary
+        const passCount = runner.results.filter(r => r.status === 'pass').length;
+        const failCount = runner.results.filter(r => r.status === 'fail').length;
+        
+        runner.log(`\nTest Summary: ${passCount} passed, ${failCount} failed`, 
+                   failCount === 0 ? 'pass' : 'fail');
+    </script>
+</body>
+</html>

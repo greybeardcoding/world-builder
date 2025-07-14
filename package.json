@@ -1,37 +1,17 @@
 {
   "name": "world-builder",
-  "version": "0.1.0",
-  "private": true,
-  "main": "dist/electron/main.js",
+  "version": "1.0.0",
+  "main": "main.js",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "electron": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron-build": "npm run build && npm run build-electron && electron .",
-    "build-electron": "tsc electron/*.ts --outDir dist/electron --target es2020 --module commonjs --moduleResolution node",
-    "dist": "npm run build && npm run build-electron && electron-builder",
-    "pack": "electron-builder --dir"
+    "start": "electron .",
+    "test": "echo 'Open tests/block-editor.test.html in browser to run tests'"
   },
   "dependencies": {
-    "next": "15.3.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@tiptap/core": "^2.1.16",
+    "@tiptap/starter-kit": "^2.1.16",
+    "@tiptap/extension-placeholder": "^2.1.16"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "concurrently": "^9.2.0",
-    "electron": "^37.2.1",
-    "electron-builder": "^26.0.12",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.5",
-    "tailwindcss": "^4",
-    "typescript": "^5",
-    "wait-on": "^8.0.3"
+    "electron": "^37.2.1"
   }
 }

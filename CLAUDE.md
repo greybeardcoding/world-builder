@@ -1,0 +1,21 @@
+# Claude Code Instructions
+
+## Important Notes
+- **NEVER delete the conversations/ folder** - contains important user archives and designs
+- **Do not delete untracked files unless specifically directed to**
+- Always ask before removing user data or documentation
+
+## Project Structure
+This is a vanilla Electron application with:
+- `main.js` - Electron main process
+- `index.html` - Application UI
+- `package.json` - Dependencies and scripts
+
+## Commands
+- `npm start` - Launch the Electron application
+- `npm install` - Install dependencies
+
+## Development Notes
+- Started as Next.js but converted to vanilla Electron for reliability
+- Images and CSS load correctly with this setup
+- Foundation is stable for incremental development

@@ -40,14 +40,14 @@
         <!-- Middle Panel -->
         <div class="panel middle-panel">
             <div class="tab-container">
-                <button class="tab active" onclick="switchTab(0)">Document 1</button>
-                <button class="tab" onclick="switchTab(1)">Document 2</button>
+                <button class="tab active" onclick="App.switchTab(0)">Document 1</button>
+                <button class="tab" onclick="App.switchTab(1)">Document 2</button>
             </div>
             <div class="tab-content">
                 <div class="block-container" id="middle-blocks">
                     <!-- Blocks will be dynamically added here -->
                 </div>
-                <button class="add-block-btn" onclick="addNewBlock()">+ Add Block</button>
+                <button class="add-block-btn" onclick="App.addNewBlock()">+ Add Block</button>
             </div>
         </div>
         
@@ -100,7 +100,7 @@
                 blockElement.className = 'block';
                 blockElement.innerHTML = `
                     <div class="block-actions">
-                        <button onclick="blockSystem.removeBlock('${blockId}')">×</button>
+                        <button onclick="App.removeBlock('${blockId}')">×</button>
                     </div>
                     <div class="block-type">${type}</div>
                     <div class="block-content">
@@ -155,23 +155,29 @@
             }
         }
 
-        // Initialize system
-        window.blockSystem = new BlockSystem();
+        // Namespace all app functionality under single global
+        window.App = {
+            blockSystem: new BlockSystem(),
+            
+            // UI Functions
+            addNewBlock() {
+                return this.blockSystem.createBlock('text');
+            },
+            
+            switchTab(index) {
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach((tab, i) => {
+                    tab.classList.toggle('active', i === index);
+                });
+            },
+            
+            removeBlock(blockId) {
+                return this.blockSystem.removeBlock(blockId);
+            }
+        };
 
         // Add initial block
-        window.blockSystem.createBlock('text');
-
-        // UI Functions
-        window.addNewBlock = () => {
-            window.blockSystem.createBlock('text');
-        };
-
-        window.switchTab = (index) => {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach((tab, i) => {
-                tab.classList.toggle('active', i === index);
-            });
-        };
+        window.App.blockSystem.createBlock('text');
     </script>
 </body>
 </html>

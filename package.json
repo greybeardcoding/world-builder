@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "test": "echo 'Open tests/block-editor.test.html in browser to run tests'"
   },
   "dependencies": {
     "@tiptap/core": "^2.1.16",

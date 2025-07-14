@@ -17,7 +17,7 @@ class BlockSystem {
     }
 
     // ATOMIC: Create single block
-    createBlock(type = 'text') {
+    createBlock(type = 'text', content = '', placeholder = '') {
         const blockId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         
         const blockElement = document.createElement('div');
@@ -40,10 +40,10 @@ class BlockSystem {
             extensions: [
                 StarterKit,
                 Placeholder.configure({
-                    placeholder: `Start typing in this ${type} block...`
+                    placeholder: placeholder || `Start typing in this ${type} block...`
                 })
             ],
-            content: '',
+            content: content,
             editorProps: {
                 attributes: {
                     class: 'ProseMirror'

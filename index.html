@@ -94,15 +94,13 @@
             
             switchTab(index) {
                 const tabs = document.querySelectorAll('.tab');
-                const panels = document.querySelectorAll('.tab-content');
-                
                 tabs.forEach((tab, i) => {
                     tab.classList.toggle('active', i === index);
                 });
                 
-                panels.forEach((panel, i) => {
-                    panel.style.display = i === index ? 'block' : 'none';
-                });
+                // For now, just update active tab styling
+                // TODO: Implement multiple tab content areas when needed
+                console.log(`Switched to tab ${index}`);
             },
             
             removeBlock(blockId) {

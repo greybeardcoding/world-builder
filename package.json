@@ -5,6 +5,11 @@
   "scripts": {
     "start": "electron ."
   },
+  "dependencies": {
+    "@tiptap/core": "^2.1.16",
+    "@tiptap/starter-kit": "^2.1.16",
+    "@tiptap/extension-placeholder": "^2.1.16"
+  },
   "devDependencies": {
     "electron": "^37.2.1"
   }

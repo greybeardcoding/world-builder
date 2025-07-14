@@ -3,32 +3,335 @@
 <head>
     <title>World Builder</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f0f0f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #1e1e1e;
+            color: #d4d4d4;
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        .app-container {
+            display: flex;
+            height: 100vh;
         }
-        img {
-            max-width: 200px;
-            margin: 10px 0;
+        
+        .panel {
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            overflow: auto;
         }
-        h1 {
-            color: #333;
+        
+        .left-panel {
+            width: 300px;
+            min-width: 200px;
+        }
+        
+        .middle-panel {
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .right-panel {
+            width: 300px;
+            min-width: 200px;
+            border-right: none;
+            border-left: 1px solid #3e3e42;
+        }
+        
+        .panel-header {
+            padding: 12px 16px;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .block-container {
+            padding: 8px;
+        }
+        
+        .block {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            min-height: 40px;
+            position: relative;
+        }
+        
+        .block-content {
+            padding: 12px;
+        }
+        
+        .block-editor {
+            min-height: 40px;
+            outline: none;
+        }
+        
+        .block-editor:focus {
+            outline: 2px solid #0078d4;
+            outline-offset: -2px;
+        }
+        
+        .block-actions {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .block:hover .block-actions {
+            opacity: 1;
+        }
+        
+        .block-actions button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-block-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 8px;
+        }
+        
+        .ProseMirror {
+            outline: none;
+        }
+        
+        .ProseMirror p.is-editor-empty:first-child::before {
+            color: #858585;
+            content: attr(data-placeholder);
+            float: left;
+            height: 0;
+            pointer-events: none;
+        }
+        
+        .block-type {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 10px;
+            color: #858585;
+            background: #3e3e42;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+        
+        .tab-container {
+            display: flex;
+            background: #2d2d30;
+            border-bottom: 1px solid #3e3e42;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            background: #3e3e42;
+            border: none;
+            color: #d4d4d4;
+            cursor: pointer;
+            border-right: 1px solid #252526;
+        }
+        
+        .tab.active {
+            background: #252526;
+        }
+        
+        .tab-content {
+            padding: 16px;
+            height: calc(100vh - 60px);
+            overflow: auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>World Builder</h1>
-        <p>Basic Electron app working!</p>
-        <img src="logo.svg" alt="Logo" />
-        <button onclick="alert('JavaScript works!')">Test Button</button>
+    <div class="app-container">
+        <!-- Left Panel -->
+        <div class="panel left-panel">
+            <div class="panel-header">Workspace</div>
+            <div class="block-container" id="left-blocks">
+                <div class="block">
+                    <div class="block-type">account</div>
+                    <div class="block-content">
+                        <strong>User Account</strong><br>
+                        <small>john.doe@example.com</small>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">menu</div>
+                    <div class="block-content">
+                        <div>📄 New Document</div>
+                        <div>📁 Open Folder</div>
+                        <div>⚙️ Settings</div>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">tree</div>
+                    <div class="block-content">
+                        <div><strong>📁 Project Files</strong></div>
+                        <div style="margin-left: 16px;">📄 Chapter 1.md</div>
+                        <div style="margin-left: 16px;">📄 Chapter 2.md</div>
+                        <div style="margin-left: 16px;">📁 Characters</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Middle Panel -->
+        <div class="panel middle-panel">
+            <div class="tab-container">
+                <button class="tab active" onclick="switchTab(0)">Document 1</button>
+                <button class="tab" onclick="switchTab(1)">Document 2</button>
+            </div>
+            <div class="tab-content">
+                <div class="block-container" id="middle-blocks">
+                    <!-- Blocks will be dynamically added here -->
+                </div>
+                <button class="add-block-btn" onclick="addNewBlock()">+ Add Block</button>
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="panel right-panel">
+            <div class="panel-header">Properties</div>
+            <div class="block-container" id="right-blocks">
+                <div class="block">
+                    <div class="block-type">meta</div>
+                    <div class="block-content">
+                        <strong>Document Info</strong><br>
+                        <small>Created: Today<br>
+                        Words: 1,247<br>
+                        Status: Draft</small>
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="block-type">outline</div>
+                    <div class="block-content">
+                        <strong>Document Outline</strong>
+                        <div style="margin-top: 8px;">
+                            <div>1. Introduction</div>
+                            <div>2. Main Content</div>
+                            <div>3. Conclusion</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <script type="module">
+        import { Editor } from './node_modules/@tiptap/core/dist/index.js'
+        import StarterKit from './node_modules/@tiptap/starter-kit/dist/index.js'
+        import Placeholder from './node_modules/@tiptap/extension-placeholder/dist/index.js'
+
+        // SOLID: Single responsibility block system
+        class BlockSystem {
+            constructor() {
+                this.blocks = [];
+                this.editors = new Map();
+                this.container = document.getElementById('middle-blocks');
+            }
+
+            // ATOMIC: Create single block
+            createBlock(type = 'text') {
+                const blockId = `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                
+                const blockElement = document.createElement('div');
+                blockElement.className = 'block';
+                blockElement.innerHTML = `
+                    <div class="block-actions">
+                        <button onclick="blockSystem.removeBlock('${blockId}')">×</button>
+                    </div>
+                    <div class="block-type">${type}</div>
+                    <div class="block-content">
+                        <div class="block-editor" id="${blockId}"></div>
+                    </div>
+                `;
+
+                this.container.appendChild(blockElement);
+
+                // Don't Reinvent: Use Tiptap's proven editor
+                const editor = new Editor({
+                    element: document.getElementById(blockId),
+                    extensions: [
+                        StarterKit,
+                        Placeholder.configure({
+                            placeholder: `Start typing in this ${type} block...`
+                        })
+                    ],
+                    content: '',
+                    editorProps: {
+                        attributes: {
+                            class: 'ProseMirror'
+                        }
+                    }
+                });
+
+                const block = { id: blockId, type, element: blockElement, editor };
+                this.blocks.push(block);
+                this.editors.set(blockId, editor);
+
+                // Focus new block
+                setTimeout(() => editor.commands.focus(), 100);
+                
+                return block;
+            }
+
+            // YAGNI: Simple removal
+            removeBlock(blockId) {
+                const editor = this.editors.get(blockId);
+                if (editor) {
+                    editor.destroy();
+                    this.editors.delete(blockId);
+                }
+
+                this.blocks = this.blocks.filter(block => {
+                    if (block.id === blockId) {
+                        block.element.remove();
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        }
+
+        // Initialize system
+        window.blockSystem = new BlockSystem();
+
+        // Add initial block
+        window.blockSystem.createBlock('text');
+
+        // UI Functions
+        window.addNewBlock = () => {
+            window.blockSystem.createBlock('text');
+        };
+
+        window.switchTab = (index) => {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+        };
+    </script>
 </body>
 </html>

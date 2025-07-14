@@ -3,6 +3,7 @@
 ## Important Notes
 - **NEVER delete the conversations/ folder** - contains important user archives and designs
 - **Do not delete untracked files unless specifically directed to**
+- **Always move files to recycling bin instead of permanent deletion** - use `trash` command or similar
 - Always ask before removing user data or documentation
 
 ## Project Structure

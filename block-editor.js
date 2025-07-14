@@ -16,7 +16,7 @@ class BlockSystem {
         this.container = container || document.getElementById('middle-blocks');
     }
 
-    // ATOMIC: Create single block
+    // ATOMIC: Create single block with content and placeholder support
     createBlock(type = 'text', content = '', placeholder = '') {
         const blockId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         

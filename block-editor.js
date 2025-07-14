@@ -17,7 +17,7 @@ class BlockEditor {
 
     // SOLID: Single responsibility - create one block type
     createBlock(type, content = '', placeholder = '') {
-        const blockId = `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const blockId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
         
         const block = {
             id: blockId,

@@ -254,7 +254,7 @@
 
             // ATOMIC: Create single block
             createBlock(type = 'text') {
-                const blockId = `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                const blockId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
                 
                 const blockElement = document.createElement('div');
                 blockElement.className = 'block';

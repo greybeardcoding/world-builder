@@ -6,6 +6,13 @@
 - **Always move files to recycling bin instead of permanent deletion** - use `trash` command or similar
 - Always ask before removing user data or documentation
 
+## Security Requirements
+- **ALWAYS follow Electron security best practices**
+- **Security must be baked in from the beginning, not bolted on later**
+- **NEVER use nodeIntegration: true or contextIsolation: false**
+- **Always use contextBridge for secure API exposure between main and renderer**
+- **Create secure proxies for any Electron APIs the renderer needs**
+
 ## Project Structure
 This is a vanilla Electron application with:
 - `main.js` - Electron main process

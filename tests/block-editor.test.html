@@ -182,6 +182,30 @@
             runner.assertFalse(system.editors.has(block.id), 'Editor should be removed from map');
         });
 
+        runner.test('getBlocks() returns correct block data', () => {
+            const system = new BlockSystem(testContainer);
+            
+            // Test empty state
+            const emptyBlocks = system.getBlocks();
+            runner.assertEqual(emptyBlocks.length, 0, 'Should return empty array initially');
+            
+            // Add blocks and test data structure
+            const textBlock = system.createBlock('text');
+            const headingBlock = system.createBlock('heading');
+            
+            const blocks = system.getBlocks();
+            runner.assertEqual(blocks.length, 2, 'Should return 2 blocks');
+            
+            // Verify data structure
+            runner.assertTrue(blocks[0].hasOwnProperty('id'), 'Block should have id property');
+            runner.assertTrue(blocks[0].hasOwnProperty('type'), 'Block should have type property');
+            runner.assertTrue(blocks[0].hasOwnProperty('content'), 'Block should have content property');
+            
+            runner.assertEqual(blocks[0].type, 'text', 'First block should be text type');
+            runner.assertEqual(blocks[1].type, 'heading', 'Second block should be heading type');
+            runner.assertTrue(typeof blocks[0].content === 'string', 'Content should be string');
+        });
+
         // Display summary
         const passCount = runner.results.filter(r => r.status === 'pass').length;
         const failCount = runner.results.filter(r => r.status === 'fail').length;
